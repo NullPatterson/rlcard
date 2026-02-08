@@ -9,4 +9,4 @@ from .player import CTPinochlePlayer
 
 from .utils.action_event import CallActionEvent, PassBid, BidAction, PlayCardAction 
 from .utils.move import CTPinochleMove, DealHandMove, PlayCardMove, MakeBidMove, MakePassBidMove, CallMove
-
+from .utils.tray import Tray
