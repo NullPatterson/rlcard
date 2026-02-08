@@ -8,7 +8,6 @@ from typing import List
 from .utils.ctpinochle_card import CTPinochleCard
 
 class CTPinochlePlayer:
-    # FLAG idk what np_random is
     def __init__(self, player_id: int, np_random):
         if player_id < 0 or player_id > 2:
             raise Exception(f'CTPinochlePLayer has invalid player_id: {player_id}')
@@ -22,4 +21,4 @@ class CTPinochlePlayer:
     def get_player_id(self):
         return self.player_id
 
-        
+    # FLAG Im not sure if i will need to indicate a left, center right player or not 
