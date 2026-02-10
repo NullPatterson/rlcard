@@ -111,6 +111,9 @@ class CTPinochleRound:
         current_player = self.players[self.current_player_id]
 
         if isinstance(action, PassBid):
+            if self.players_passed[self.current_player_id]:
+                raise Exception(f'Player {self.current_player_id} has already passed and cannot bid')
+    
             self.move_sheet.append(MakePassBidMove(current_player))
             self.pass_count += 1
 
@@ -138,13 +141,17 @@ class CTPinochleRound:
             self.winning_bid_move = make_bid_move
             self.move_sheet.append(make_bid_move)
 
-        # Move to next player if bidding is not over
+        # Move to next player who has not already passed if bidding is not over
         if not self.is_bidding_over():
-            self.current_player_id = (self.current_player_id + 1) % 3
+            # Find next active player (skip those who have passed)
+            next_player = (self.current_player_id + 1) % 3
+            while self.players_passed[next_player]:
+                next_player = (next_player + 1) % 3
+            self.current_player_id = next_player
         else:
             # Player to lead the first trick is the one who won the bid
             self.current_player_id = self.bid_winner_id
-    
+        
     def set_trump(self, trump_suit: str):
         if self.trump_suit is not None:
             raise Exception(f'Trump already set to {self.trump_suit}')
@@ -263,3 +270,5 @@ class CTPinochleRound:
         state['trick_points'] = self.trick_points
         state['tricks_won'] = self.tricks_won
         return state
+
+# FLAG Might need to print the current game state at this point based off print_scene in bridge/round.py
