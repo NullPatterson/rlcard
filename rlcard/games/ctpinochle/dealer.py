@@ -27,5 +27,6 @@ class CTPinochleDealer:
     '''
     def deal_cards(self, player: CTPinochlePlayer, num: int = 4):
         for __ in range(num):
-            player.hand.append(self.to_be_dealt.pop())
+            if self.to_be_dealt:
+                player.hand.append(self.to_be_dealt.pop())
 

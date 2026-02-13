@@ -15,6 +15,20 @@ from .utils.action_event import ActionEvent, BidAction, PassBid
 from .utils.move import MakeBidMove
 from .utils.ctpinochle_card import CTPinochleCard
 
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler("legal_moves.txt")
+file_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(message)s"
+)
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+
 class CTPinochleJudger:
     '''
         Judger decides legal actions for current player
@@ -30,8 +44,9 @@ class CTPinochleJudger:
             # During bidding phase
             if not self.game.round.is_bidding_over():
                 # Player can only pass if they haven't already passed
-                if not self.game.round.player_passed[current_player.player_id]:
+                if not self.game.round.player_pass[current_player.player_id]:
                     legal_actions.append(PassBid())
+                    logger.info(f'Pass is legal: {legal_actions}')
                 
                 # Find the last bid to determine minimum next bid
                 last_make_bid_move: MakeBidMove or None = None
@@ -52,6 +67,7 @@ class CTPinochleJudger:
                 for bid_amount in range(next_bid_amount, ActionEvent.max_bid + 1):
                     action = BidAction(bid_amount)
                     legal_actions.append(action)
+                    logger.info(f'Legal Bids: {legal_actions}')
             
             # During card play phase
             else:
@@ -86,5 +102,7 @@ class CTPinochleJudger:
                 for card in legal_cards:
                     action = PlayCardAction(card=card)
                     legal_actions.append(action)
+                    logger.info(f'Cards in hand: {legal_actions}')
         
+        logger.info(f'Final Action Set: {legal_actions}\n\n')
         return legal_actions

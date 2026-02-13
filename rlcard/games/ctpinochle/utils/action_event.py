@@ -9,7 +9,7 @@ from .ctpinochle_card import CTPinochleCard
 # =========================================
 # Action_ids:
 #       0 -> pass_bid_action_id 
-#       min_bid = 21
+#       min_bid = 21 for normal meanas but if dealer gets stuck its 20
 #       max_bid = 50 (should cover most games)
 #       1-30 -> bid_action_id (bid amount of 21-50)
 #       31-78 -> play_card_action_id
@@ -65,7 +65,7 @@ class PassBid(CallActionEvent):
     
 class BidAction(CallActionEvent):
     def __init__(self, bid_amount: int):
-        if bid_amount < ActionEvent.min_bid or bid_amount > ActionEvent.max_bid:
+        if bid_amount < ActionEvent.min_bid-1 or bid_amount > ActionEvent.max_bid:
             raise Exception(f'BidAction has invalid bid_amount: {bid_amount}')
         bid_action_id = bid_amount - ActionEvent.min_bid + ActionEvent.first_bid_action_id
         super().__init__(action_id=bid_action_id)

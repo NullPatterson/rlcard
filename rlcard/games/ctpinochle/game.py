@@ -12,7 +12,7 @@ from .utils.action_event import ActionEvent, CallActionEvent, PlayCardAction
 
 class CTPinochleGame:
     # The class to interact with outer environment
-    def __init__(self, allow_step_back = False)
+    def __init__(self, allow_step_back = False):
         self.allow_step_back: bool = allow_step_back
         self.np_random = np.random.RandomState()
         self.judger: CTPinochleJudger = CTPinochleJudger(game=self)
