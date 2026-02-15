@@ -13,6 +13,10 @@ from .ctpinochle_card import CTPinochleCard
 #       max_bid = 50 (should cover most games)
 #       1-30 -> bid_action_id (bid amount of 21-50)
 #       31-78 -> play_card_action_id
+#       79 -> Select Club as Trump
+#       80 -> Select Diamond as Trump
+#       81 -> Select Heart as Trump
+#       82 -> Select Spades as Trump
 # =========================================
 
 class ActionEvent(object): 
@@ -21,6 +25,9 @@ class ActionEvent(object):
     pass_bid_action_id = 0
     first_bid_action_id = 1
     first_play_card_action_id = 31
+    min_trump = 79
+    max_trump = 82
+    trump_suits = ['C', 'D', 'H', 'S']
 
     def __init__(self, action_id: int):
         self.action_id = action_id 
@@ -43,6 +50,9 @@ class ActionEvent(object):
             card_id = action_id - ActionEvent.first_play_card_action_id
             card = CTPinochleCard.card(card_id=card_id)
             return PlayCardAction(card=card)
+        elif ActionEvent.min_trump <= action_id <= ActionEvent.max_trump:
+            trump_suit = ActionEvent.trump_suits[action_id-79]
+            
         else:
             raise Exception(f'ActionEvent form_action_id: invalid action_id={action_id}')
 
@@ -88,3 +98,17 @@ class PlayCardAction(ActionEvent):
     
     def __repr__(self):
         return f"{self.card}"
+    
+class SelectTrumpAction(ActionEvent):
+    def __init__(self, trump_suit: str):
+        if trump_suit not in ['C', 'H', 'D', 'S']:
+            raise Exception(f'SelectTrumpAction has invalid trump suit: {trump_suit}')
+        trump_suit_id = ActionEvent.trump_suits.index(trump_suit) + 79
+        super().__init__(action_id=trump_suit_id)
+        self.trump_suit = trump_suit
+    
+    def __str__(self):
+        return f'{self.trump_suit}'
+    
+    def __repr__(self):
+        return f'{self.trump_suit}'

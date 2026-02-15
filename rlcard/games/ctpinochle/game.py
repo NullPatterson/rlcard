@@ -8,7 +8,7 @@ import numpy as np
 
 from .judger import CTPinochleJudger
 from .round import CTPinochleRound
-from .utils.action_event import ActionEvent, CallActionEvent, PlayCardAction
+from .utils.action_event import ActionEvent, CallActionEvent, PlayCardAction, SelectTrumpAction
 
 class CTPinochleGame:
     # The class to interact with outer environment
@@ -42,6 +42,9 @@ class CTPinochleGame:
         # Perform game action and return next player number and the state for next palyer
         if isinstance(action, CallActionEvent):
             self.round.make_call(action=action)
+        elif isinstance(action, SelectTrumpAction):
+            self.round.set_trump(action.trump_suit)
+            self.round.show_meld()
         elif isinstance(action, PlayCardAction):
             self.round.play_card(action=action)
         # FLAG Bidding event?

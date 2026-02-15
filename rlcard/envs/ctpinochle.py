@@ -211,7 +211,7 @@ class DefaultPinochleStateExtractor(PinochleStateExtractor):
         current_player_rep[current_player_id] = 1
 
         # construct players_passed_rep
-        players_passed_rep = np.array(game.round.players_passed, dtype=int)
+        players_passed_rep = np.array(game.round.player_pass, dtype=int)
 
         # construct is_bidding_rep
         is_bidding_rep = np.array([0] if game.round.is_bidding_over() else [1])
@@ -252,7 +252,7 @@ class DefaultPinochleStateExtractor(PinochleStateExtractor):
         meld_shown_rep = np.array([1] if game.round.meld_shown else [0])
 
         # player_melds_rep (normalized by dividing by 200)
-        player_melds_rep = np.array(game.round.player_melds, dtype=float) / 200.0
+        player_melds_rep = np.array(game.round.player_meld_points, dtype=float) / 200.0
 
         # tricks_won_rep
         tricks_won_rep = np.array(game.round.tricks_won, dtype=int)
@@ -283,3 +283,12 @@ class DefaultPinochleStateExtractor(PinochleStateExtractor):
         extracted_state['raw_legal_actions'] = raw_legal_actions
         extracted_state['raw_obs'] = obs
         return extracted_state
+
+    def reset(self):
+        ''' Start a new game
+        
+        Returns:
+            (tuple): Tuple of (state, player_id)
+        '''
+        state, player_id = self.game.init_game()
+        return self._extract_state(state), player_id

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .game import CTPinochleGame
 
-from .utils.action_event import PlayCardAction
+from .utils.action_event import PlayCardAction, SelectTrumpAction
 from .utils.action_event import ActionEvent, BidAction, PassBid
 from .utils.move import MakeBidMove
 from .utils.ctpinochle_card import CTPinochleCard
@@ -46,7 +46,7 @@ class CTPinochleJudger:
                 # Player can only pass if they haven't already passed
                 if not self.game.round.player_pass[current_player.player_id]:
                     legal_actions.append(PassBid())
-                    logger.info(f'Pass is legal: {legal_actions}')
+                    #logger.info(f'Pass is legal: {legal_actions}')
                 
                 # Find the last bid to determine minimum next bid
                 last_make_bid_move: MakeBidMove or None = None
@@ -67,8 +67,15 @@ class CTPinochleJudger:
                 for bid_amount in range(next_bid_amount, ActionEvent.max_bid + 1):
                     action = BidAction(bid_amount)
                     legal_actions.append(action)
-                    logger.info(f'Legal Bids: {legal_actions}')
+                    #logger.info(f'Legal Bids: {legal_actions}')
             
+            # Trump selection phase
+            elif self.game.round.trump_suit is None:
+                # Only bid winner selects trump
+                if current_player.player_id == self.game.round.bid_winner_id:
+                    for suit in ['C', 'D', 'H', 'S']:
+                        legal_actions.append(SelectTrumpAction(suit))
+
             # During card play phase
             else:
                 trick_moves = self.game.round.get_trick_moves()

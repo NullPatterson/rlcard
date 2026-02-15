@@ -19,3 +19,5 @@ rlcard/games/doudizhu/jsondata/
 rlcard/agents/gin_rummy_human_agent/gui_cards/cards_png
 testideas.py
 tests/games/test_pinochle_game.py
+player_pass.txt
+legal_moves.txt

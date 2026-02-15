@@ -245,7 +245,7 @@ class CTPinochleRound:
         state['move_count'] = len(self.move_sheet)
         state['dealer_id'] = self.dealer_id
         state['current_player_id'] = self.current_player_id
-        state['round_phase'] = self.round_phase
+        state['roundphase'] = self.roundphase
         state['current_bid'] = self.current_bid
         state['bid_winner_id'] = self.bid_winner_id
         state['trump_suit'] = self.trump_suit
@@ -267,7 +267,7 @@ class CTPinochleRound:
             return 'game over'
         elif self.trump_suit is None:
             return 'bidding'
-        elif not self.meld_shown():
+        elif not self.meld_shown:
             return 'show meld'
         else:
             return 'play card'
@@ -279,7 +279,7 @@ class CTPinochleRound:
             last_call_text = f'{last_move}' if isinstance(last_move, CallMove) else 'None'
             print(f'Last Call: {last_call_text}')
         if self.is_bidding_over() and self.winning_bid_move:
-            self.set_trump()
+            #self.set_trump()
             trump_suit = self.trump_suit
             if not trump_suit:
                 trump_suit = 'NT'
