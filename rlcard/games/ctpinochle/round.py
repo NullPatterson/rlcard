@@ -55,6 +55,7 @@ class CTPinochleRound:
 
         # Trick State 
         self.play_card_count: int = 0
+        self.trick_moves = []
         self.trick_points: List[int] = [0, 0, 0]
         self.tricks_won: List[int] = [0, 0, 0] # Number of tricks won by each player. matters as if they win 0 they lose all meld for round
 
@@ -169,21 +170,23 @@ class CTPinochleRound:
         self.play_card_count += 1
 
         # Check if trick is complete
-        trick_moves = self.get_trick_moves()
-        if len(trick_moves) == 3:
+        self.trick_moves = self.get_trick_moves()
+        if len(self.trick_moves) == 3:
             # Determine trick winner 
-            trick_winner = self._determine_trick_winner(trick_moves)
+            trick_winner = self._determine_trick_winner(self.trick_moves)
             self.current_player_id = trick_winner.player_id
             self.tricks_won[trick_winner.player_id] += 1
             
             # Calculate trick points
-            trick_points = sum(1 for move in trick_moves if move.card.rank in ['A', '10', 'K'])
+            trick_points = sum(1 for move in self.trick_moves if move.card.rank in ['A', '10', 'K'])
             
             # Bonus point for last trick
             if self.play_card_count == 48:
                 trick_points += 1
             
             self.trick_points[trick_winner.player_id] += trick_points
+            # reset current trick to empty
+            self.trick_moves = []
         else:
             # Move to next player
             self.current_player_id = (self.current_player_id + 1) % 3

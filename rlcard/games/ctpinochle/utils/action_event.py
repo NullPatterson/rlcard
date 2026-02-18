@@ -52,13 +52,14 @@ class ActionEvent(object):
             return PlayCardAction(card=card)
         elif ActionEvent.min_trump <= action_id <= ActionEvent.max_trump:
             trump_suit = ActionEvent.trump_suits[action_id-79]
+            return SelectTrumpAction(trump_suit)
             
         else:
             raise Exception(f'ActionEvent form_action_id: invalid action_id={action_id}')
 
     @staticmethod 
     def get_num_actions():
-        return 1 + 30 + 48 # Pass on bid, 30 bids, 48 cards
+        return 1 + 30 + 48 + 4 # Pass on bid, 30 bids, 48 cards, 4 suits of trump
 
 class CallActionEvent(ActionEvent):
     pass

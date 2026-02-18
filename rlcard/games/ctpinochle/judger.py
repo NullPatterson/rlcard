@@ -83,16 +83,23 @@ class CTPinochleJudger:
                 legal_cards = []
                 
                 # First card of trick - can play anything
-                if not trick_moves:
+                if not trick_moves or len(trick_moves) == 3:
+                    #logger.info('Entered not trick_moves')
                     legal_cards = hand
                 else:
                     # Must follow suit if possible
                     led_card: CTPinochleCard = trick_moves[0].card
+                    largest_rank_index: int = max(trick_move.card.rank_index for trick_move in trick_moves)
+                    #logger.info(f'led_card: {led_card} | Current trick: {trick_moves}')
                     cards_of_led_suit = [card for card in hand if card.suit == led_card.suit]
-                    
+                    #logger.info(f'Cards of Led: {cards_of_led_suit} | Led Suit: {led_card.suit}')
+
                     if cards_of_led_suit:
                         # Must follow suit
-                        legal_cards = cards_of_led_suit
+                        cards_of_greater_rank = [card for card in cards_of_led_suit if card.rank_index > largest_rank_index]
+                        #logger.info(f'>= cards: {cards_of_greater_rank}\n')
+                        if cards_of_greater_rank: legal_cards = cards_of_greater_rank
+                        else: legal_cards = cards_of_led_suit
                     else:
                         # Cannot follow suit - must play trump if have it
                         trump_suit = self.game.round.trump_suit
@@ -109,7 +116,7 @@ class CTPinochleJudger:
                 for card in legal_cards:
                     action = PlayCardAction(card=card)
                     legal_actions.append(action)
-                    logger.info(f'Cards in hand: {legal_actions}')
+                    #logger.info(f'Cards in hand: {legal_actions}')
         
-        logger.info(f'Final Action Set: {legal_actions}\n\n')
+        #logger.info(f'Final Action Set: {legal_actions}\n\n')
         return legal_actions

@@ -20,8 +20,8 @@ class CTPinochleCard(Card):
     
     def __init__(self, suit: str, rank: str):
         super().__init__(suit=suit, rank=rank)
-        suit_index = CTPinochleCard.suits.index(self.suit)
-        rank_index = CTPinochleCard.ranks.index(self.rank)
+        self.suit_index = CTPinochleCard.suits.index(self.suit)
+        self.rank_index = CTPinochleCard.ranks.index(self.rank)
         
         # Each card appears twice in the deck
         # card_id ranges from 0-47 (48 total cards)

@@ -1,4 +1,18 @@
 import numpy as np
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler("random_agent_test.txt")
+file_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(message)s"
+)
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
 
 
 class RandomAgent(object):
@@ -38,8 +52,11 @@ class RandomAgent(object):
             probs (list): The list of action probabilities
         '''
         probs = [0 for _ in range(self.num_actions)]
+        # State is from env/ctpinochle.py
         for i in state['legal_actions']:
+            #logger.info(f'i-val: {i} | probs[i]: {1/len(state['legal_actions'])}')
             probs[i] = 1/len(state['legal_actions'])
+        #logger.info(f'Spacebreak\n')
 
         info = {}
         info['probs'] = {state['raw_legal_actions'][i]: probs[list(state['legal_actions'].keys())[i]] for i in range(len(state['legal_actions']))}
