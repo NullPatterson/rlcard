@@ -91,6 +91,8 @@ class PinochlePayoffDelegate(object):
 
 
 class DefaultPinochlePayoffDelegate(PinochlePayoffDelegate):
+    WIN_BONUS = 50      # Extra reward for winning the game
+    LOSS_PENALTY = -50  # Extra penalty for losing the game
 
     def __init__(self):
         pass
@@ -99,15 +101,22 @@ class DefaultPinochlePayoffDelegate(PinochlePayoffDelegate):
         ''' Get the payoffs of players.
 
         Returns:
-            (list): A list of payoffs for each player.
+            (list): A list of payoffs for each player, using cumulative
+                    total_scores plus a win/loss bonus at game end.
         '''
         if game.is_over():
-            # Return the scores calculated by the round
-            scores = game.round.calculate_scores()
-            return np.array(scores)
+            scores = np.array(game.get_payoffs(), dtype=float)  # cumulative totals
+
+            # Add win bonus / loss penalty
+            if game.winner_id is not None:
+                scores[game.winner_id] += self.WIN_BONUS
+                for player_id in range(game.num_players):
+                    if player_id != game.winner_id:
+                        scores[player_id] += self.LOSS_PENALTY
+
+            return scores
         else:
-            # Game not over yet
-            return np.array([0, 0, 0])
+            return np.array([0.0, 0.0, 0.0])
 
 
 class PinochleStateExtractor(object):  # interface

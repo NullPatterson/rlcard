@@ -91,13 +91,14 @@ class CTPinochleGame:
         The game is over when:
           1. The current round has finished, AND
           2. At least one player is at or above WIN_SCORE.
+          3. If all player scores fall below -100 points for the sake of training models
 
         We only check after a round completes so that every player has a fair
         chance to respond in the same round (standard pinochle convention).
         '''
         if self.round is None or not self.round.is_over():
             return False
-        return any(score >= WIN_SCORE for score in self.total_scores)
+        return any(score >= WIN_SCORE for score in self.total_scores) or any(score <= -200 for score in self.total_scores)
 
     def get_payoffs(self) -> List[int]:
         '''Return cumulative scores as payoffs. Call after is_over() is True.'''
