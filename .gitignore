@@ -21,3 +21,5 @@ testideas.py
 tests/games/test_pinochle_game.py
 player_pass.txt
 legal_moves.txt
+/checkpoints
+/logs

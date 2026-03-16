@@ -267,7 +267,7 @@ class CTPinochleRound:
     @property
     def roundphase(self):
         if self.is_over():
-            return 'game over'
+            return 'round over'
         elif self.trump_suit is None:
             return 'bidding'
         elif not self.meld_shown:

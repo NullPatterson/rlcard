@@ -24,7 +24,7 @@ class CTPinochleEnv(Env):
         self.name = 'ctpinochle'
         self.game = Game()
         super().__init__(config=config)
-        self.pinochlePayoffDelegate = DefaultPinochlePayoffDelegate()
+        self.pinochlePayoffDelegate = DeltaPinochlePayoffDelegate()
         self.pinochleStateExtractor = DefaultPinochleStateExtractor()
         state_shape_size = self.pinochleStateExtractor.get_state_shape_size()
         self.state_shape = [[1, state_shape_size] for _ in range(self.num_players)]
@@ -76,6 +76,10 @@ class CTPinochleEnv(Env):
         '''
         raise NotImplementedError  # Not needed
 
+    def rest(self):
+        self.pinochlePayoffDelegate.reset()
+        return super().reset()
+
 
 class PinochlePayoffDelegate(object):
 
@@ -114,9 +118,24 @@ class DefaultPinochlePayoffDelegate(PinochlePayoffDelegate):
                     if player_id != game.winner_id:
                         scores[player_id] += self.LOSS_PENALTY
 
-            return scores
+            return scores/150
         else:
             return np.array([0.0, 0.0, 0.0])
+    
+class DeltaPinochlePayoffDelegate(PinochlePayoffDelegate):
+       # A class to have intermediary rewards besides for the end of every game
+       def __init__(self):
+           self._last_scores = [0, 0, 0]
+       
+       def reset(self):
+           self._last_scores = [0, 0, 0]
+       
+       def get_payoffs(self, game: CTPinochleGame):
+           current = list(game.total_scores)
+           delta = [current[i] - self._last_scores[i] for i in range(3)]
+           self._last_scores = current
+           return np.array(delta, dtype=float)
+        
 
 
 class PinochleStateExtractor(object):  # interface
@@ -285,6 +304,7 @@ class DefaultPinochleStateExtractor(PinochleStateExtractor):
         rep.append(player_melds_rep)
         rep.append(tricks_won_rep)
         rep.append(trick_points_rep)
+        # Add cards in current trick
 
         obs = np.concatenate(rep)
         extracted_state['obs'] = obs
